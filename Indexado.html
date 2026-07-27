@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Patente en Espejo</title>
+    <!-- Importación de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #10b981;
+            --text-color: #f8fafc;
+            --input-bg: #334155;
+            --border-color: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 460px;
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--accent-color);
+        }
+
+        input[type="text"] {
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .preview-box {
+            background-color: #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 140px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .btn-download {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .btn-download:hover {
+            background-color: #059669;
+        }
+
+        .btn-download:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Generador de Patente Espejo</h2>
+
+    <!-- Entrada de Texto -->
+    <div class="form-group">
+        <label for="patenteInput">Ingrese la Patente:</label>
+        <input type="text" id="patenteInput" value="FHVG49" maxlength="10" placeholder="Ej: FHVG49">
+    </div>
+
+    <!-- Previsualización -->
+    <div class="preview-box">
+        <canvas id="patenteCanvas"></canvas>
+    </div>
+
+    <!-- Opciones de Estilo y Fuentes -->
+    <div class="controls-grid">
+        <div class="form-group">
+            <label for="estiloSelect">Estilos:</label>
+            <select id="estiloSelect">
+                <option value="normal">Normal</option>
+                <option value="bold" selected>Negritas</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="fuenteSelect">Fuentes:</label>
+            <select id="fuenteSelect">
+                <option value="'Roboto Condensed', sans-serif">Roboto Condensed</option>
+                <option value="monospace">Monospace</option>
+                <option value="sans-serif">FE-FONT</option>
+                <option value="serif">Serif</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times</option>
+                <option value="'Poppins', sans-serif">Poppins</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tamaño en CM -->
+    <div class="form-group">
+        <label for="tamanoSelect">Tamaño Imprimible:</label>
+        <select id="tamanoSelect">
+            <option value="5">5 cm</option>
+            <option value="6">6 cm</option>
+            <option value="7">7 cm</option>
+            <option value="8">8 cm</option>
+            <option value="9">9 cm</option>
+            <option value="10" selected>10 cm</option>
+            <option value="11">11 cm</option>
+            <option value="12">12 cm</option>
+        </select>
+    </div>
+
+    <button class="btn-download" onclick="descargarImagen()">Descargar Patente</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('patenteCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const patenteInput = document.getElementById('patenteInput');
+    const estiloSelect = document.getElementById('estiloSelect');
+    const fuenteSelect = document.getElementById('fuenteSelect');
+    const tamanoSelect = document.getElementById('tamanoSelect');
+
+    function renderPatente() {
+        const texto = patenteInput.value.toUpperCase() || " ";
+        const estilo = estiloSelect.value;
+        const fuente = fuenteSelect.value;
+        const cm = parseFloat(tamanoSelect.value);
+
+        // Conversión a píxeles de alta resolución para impresión (300 DPI)
+        // 1 cm = ~118.11 px a 300 DPI
+        const dpiScale = 118.11;
+        const canvasWidth = Math.round(cm * dpiScale);
+        const canvasHeight = Math.round(canvasWidth * 0.35); // Relación de aspecto estándar
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        // Fondo Blanco
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Voltear la imagen horizontalmente (efecto espejo)
+        ctx.save();
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+
+        // Configuración de Fuente y Texto
+        const fontSize = Math.round(canvasHeight * 0.65);
+        ctx.font = `${estilo} ${fontSize}px ${fuente}`;
+        ctx.fillStyle = "#000000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Dibujar el texto en el centro (en espejo)
+        ctx.fillText(texto, canvas.width / 2, canvas.height / 2);
+        ctx.restore();
+    }
+
+    // Event listeners para renderizado dinámico
+    patenteInput.addEventListener('input', renderPatente);
+    estiloSelect.addEventListener('change', renderPatente);
+    fuenteSelect.addEventListener('change', renderPatente);
+    tamanoSelect.addEventListener('change', renderPatente);
+
+    // Renderizar cuando las fuentes estén cargadas
+    document.fonts.ready.then(renderPatente);
+
+    function descargarImagen() {
+        const link = document.createElement('a');
+        link.download = `patente_espejo_${patenteInput.value || 'patente'}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+</script>
+
+</body>
+</html>
+
